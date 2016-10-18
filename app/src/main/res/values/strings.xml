@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Tenton</string>
+    <string name="title_people_detail">People Detail</string>
+    <string name="userImage">User Image</string>
+    <string name="userStatus">User Status</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="userName">Username</string>
+    <string name="passWord">Password</string>
+    <string name="btnLogIn">Log In</string>
+
+</resources>

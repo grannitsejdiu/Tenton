@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_log_in"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="105dp"
+    android:paddingLeft="15dp"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp"
+    android:orientation="vertical"
+    tools:context="com.example.admin.tenton.LogIn">
+
+
+    <EditText
+        android:id="@+id/userName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:hint="@string/userName"/>
+
+    <EditText
+        android:id="@+id/passWord"
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/passWord"/>
+
+    <Button
+        android:id="@+id/btnLogIn"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="@string/btnLogIn"
+        android:background="@drawable/login_buttonshape"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+</LinearLayout>
