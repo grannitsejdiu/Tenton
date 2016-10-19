@@ -80,8 +80,8 @@ public class PeopleListActivity extends AppCompatActivity{
 
         Intent intent = getIntent();
 
-        String fName = intent.getStringExtra("firstName");
-        String lName = intent.getStringExtra("lastName");
+        //String fName = intent.getStringExtra("firstName");
+        //String lName = intent.getStringExtra("lastName");
 
         User u = (User)intent.getSerializableExtra("User");
         currentUser = u;
