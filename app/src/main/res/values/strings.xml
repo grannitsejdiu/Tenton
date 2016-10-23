@@ -7,5 +7,7 @@
     <string name="userName">Username</string>
     <string name="passWord">Password</string>
     <string name="btnLogIn">Log In</string>
+    <string name="btnCheckIn">Check In</string>
+    <string name="btnCheckOut">Check Out</string>
 
 </resources>

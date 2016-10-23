@@ -3,15 +3,19 @@ package com.example.admin.tenton;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +70,7 @@ public class PeopleListActivity extends AppCompatActivity{
     private SwipeRefreshLayout mSwipeRefreshLayout;
     SimpleItemRecyclerViewAdapter mAdapter;
     View recyclerView;
-    private ImageView userStatus;
+    //private ImageView userStatus;
 
 
 
@@ -74,9 +78,6 @@ public class PeopleListActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_list);
-
-        userStatus = (ImageView)findViewById(R.id.userStatus);
-
 
         Intent intent = getIntent();
 
@@ -105,12 +106,16 @@ public class PeopleListActivity extends AppCompatActivity{
             public void onClick(View view) {
 
                 if (currentUser.active) {
-                    Snackbar.make(view, "Go to CheckOut Activity", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+//                    Snackbar.make(view, "Go to CheckOut Activity", Snackbar.LENGTH_LONG)
+//                            .setAction("Action", null).show();
+                    Intent intent = new Intent(getApplicationContext(), CheckInActivity.class);
+                    startActivity(intent);
                 }
                 else{
-                    Snackbar.make(view, "Go to CheckIn Activity", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+//                    Snackbar.make(view, "Go to CheckIn Activity", Snackbar.LENGTH_LONG)
+//                            .setAction("Action", null).show();
+                    Intent intent = new Intent(getApplicationContext(), CheckOutActivity.class);
+                    startActivity(intent);
                 }
 
             }
@@ -140,6 +145,7 @@ public class PeopleListActivity extends AppCompatActivity{
         pDialog.setCancelable(false);
         pDialog.show();
 
+
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(m_RequestUrl, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -148,8 +154,8 @@ public class PeopleListActivity extends AppCompatActivity{
                             JSONArray arr = response.getJSONArray("data");
                             users.clear();
                             for (int iterator = 0; iterator < arr.length(); iterator++) {
-                                User u = User.createFromObject(arr.getJSONObject(iterator));
-                                users.add(u);
+                                User user = User.createFromObject(arr.getJSONObject(iterator));
+                                users.add(user);
 
                             }
                             if (pDialog.isShowing()){
@@ -172,6 +178,8 @@ public class PeopleListActivity extends AppCompatActivity{
         RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         mRequestQueue.add(jsonObjReq);
     }
+
+
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(users));
@@ -197,9 +205,16 @@ public class PeopleListActivity extends AppCompatActivity{
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).fullName);
+            holder.mIdView.setText(mValues.get(position).userId);
             holder.mContentView.setText(mValues.get(position).fullName);
-            holder.mEmail.setText(mValues.get(position).fullName);
+            holder.mEmail.setText(mValues.get(position).email);
+
+            if (mValues.get(position).active){
+                holder.mImageView.setImageResource(R.drawable.online);
+            }
+            else {
+                holder.mImageView.setImageResource(R.drawable.offline);
+            }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -219,6 +234,8 @@ public class PeopleListActivity extends AppCompatActivity{
             public final TextView mIdView;
             public final TextView mContentView;
             public final TextView mEmail;
+            public final ImageView mImageView;
+
             public User mItem;
 
             public ViewHolder(View view) {
@@ -227,6 +244,7 @@ public class PeopleListActivity extends AppCompatActivity{
                 mIdView = (TextView) view.findViewById(R.id.id);
                 mContentView = (TextView) view.findViewById(R.id.content);
                 mEmail = (TextView) view.findViewById(R.id.email);
+                mImageView = (ImageView) view.findViewById(R.id.userStatus);
             }
 
             @Override
@@ -255,4 +273,5 @@ public class PeopleListActivity extends AppCompatActivity{
             }
         }, 2000);
     }
+
 }

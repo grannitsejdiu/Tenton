@@ -3,6 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
     android:orientation="horizontal">
 
     <ImageView
@@ -46,9 +48,15 @@
         android:layout_height="20dp"
         android:layout_toRightOf="@id/userImage"
         android:layout_toEndOf="@id/userImage"
-        android:layout_below="@id/id"
-        android:background="@drawable/online"
-        android:contentDescription="@string/userStatus" />
+        android:layout_below="@id/id"/>
+        <!--android:background="@drawable/online"-->
+
+    <View
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/userStatus"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/colorPrimary"/>
 
 
 </RelativeLayout>
