@@ -3,6 +3,7 @@ package com.example.admin.tenton;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,7 +60,7 @@ public class PeopleListActivity extends AppCompatActivity{
      * device.
      */
 
-    public User currentUser = new User();
+    public User currentUser = User.currentUser;
 
     public List<User> users = new ArrayList<User>();
 
@@ -79,13 +81,8 @@ public class PeopleListActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_list);
 
-        Intent intent = getIntent();
+//        Intent intent = getIntent();
 
-        //String fName = intent.getStringExtra("firstName");
-        //String lName = intent.getStringExtra("lastName");
-
-        User u = (User)intent.getSerializableExtra("User");
-        currentUser = u;
 
         mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -100,21 +97,35 @@ public class PeopleListActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         toolbar.setTitle(getTitle());
 
+        FloatingActionButton btnLogOut = (FloatingActionButton) findViewById(R.id.btnLogOut);
+        btnLogOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sharedPreferences = getSharedPreferences("userInfo", 0);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
+                Toast.makeText(getApplicationContext(), "Logged Out Succesfully", Toast.LENGTH_SHORT).show();
+                finish();
+                Intent intent = new Intent(getApplicationContext(), LogIn.class);
+                startActivity(intent);
+            }
+        });
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (currentUser.active) {
-//                    Snackbar.make(view, "Go to CheckOut Activity", Snackbar.LENGTH_LONG)
-//                            .setAction("Action", null).show();
+
+                if (!User.currentUser.status) {
                     Intent intent = new Intent(getApplicationContext(), CheckInActivity.class);
+                    intent.putExtra("User", currentUser);
                     startActivity(intent);
                 }
                 else{
-//                    Snackbar.make(view, "Go to CheckIn Activity", Snackbar.LENGTH_LONG)
-//                            .setAction("Action", null).show();
                     Intent intent = new Intent(getApplicationContext(), CheckOutActivity.class);
+                    intent.putExtra("User", currentUser);
                     startActivity(intent);
                 }
 
@@ -205,15 +216,18 @@ public class PeopleListActivity extends AppCompatActivity{
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
             holder.mItem = mValues.get(position);
-            holder.mIdView.setText(mValues.get(position).userId);
             holder.mContentView.setText(mValues.get(position).fullName);
-            holder.mEmail.setText(mValues.get(position).email);
 
-            if (mValues.get(position).active){
-                holder.mImageView.setImageResource(R.drawable.online);
+            if (mValues.get(position).status){
+                holder.mImageView.setImageResource(R.drawable.onlineicon);
+                holder.mIdView.setText( " In since " + mValues.get(position).calculatedMins + " minutes");
+                holder.mEmail.setText("This week: " + mValues.get(position).totalMinutes+ " minutes");
+
             }
             else {
-                holder.mImageView.setImageResource(R.drawable.offline);
+                holder.mImageView.setImageResource(R.drawable.offlineicon);
+                holder.mIdView.setText(" Out since " + mValues.get(position).calculatedMins + " minutes");
+                holder.mEmail.setText(" This week: " + mValues.get(position).totalMinutes + " minutes");
             }
 
             holder.mView.setOnClickListener(new View.OnClickListener() {

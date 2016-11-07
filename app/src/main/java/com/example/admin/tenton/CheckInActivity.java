@@ -2,7 +2,9 @@ package com.example.admin.tenton;
 
 import android.*;
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -19,6 +21,14 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.admin.tenton.dummy.PeopleContent;
+import com.example.admin.tenton.dummy.User;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -34,8 +44,20 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class CheckInActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    public User currentUser = new User();
+
+    private ProgressDialog pDialog;
+    private String m_RequestUrl = "http://in.tenton.co/api/?controller=users&action=check";
+    private String m_RequestUrl_CheckIn = "http://in.tenton.co/api/?controller=sessions&action=create";
     private GoogleMap mMap;
     private Button btnCheckIn;
     /**
@@ -49,6 +71,12 @@ public class CheckInActivity extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_in);
 
+        Intent intent = getIntent();
+        User u = (User)intent.getSerializableExtra("User");
+        currentUser = u;
+
+        //Toast.makeText(getApplicationContext(),currentUser.fullName,Toast.LENGTH_LONG).show();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.checkInFragment);
@@ -58,6 +86,52 @@ public class CheckInActivity extends AppCompatActivity implements OnMapReadyCall
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
+
+    public void checkInNow(){
+
+        pDialog = new ProgressDialog(CheckInActivity.this);
+        pDialog.setTitle("Tentonizers");
+        pDialog.setMessage("Please wait...");
+        pDialog.setCancelable(false);
+        pDialog.show();
+        StringRequest jRequest = new StringRequest(Request.Method.POST, m_RequestUrl_CheckIn,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String res) {
+                        try
+                        {
+                            JSONObject r = new JSONObject(res);
+                            System.out.println(r);
+                            User.currentUser.status = true;
+                            finish();
+
+                        }
+                        catch (JSONException e){
+                            Toast.makeText(getApplicationContext(),
+                                    e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                        if (pDialog.isShowing()) {
+                            pDialog.dismiss();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError e) {
+                e.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("userId", currentUser.userId);
+                return params;
+            }
+        };
+        RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+        mRequestQueue.add(jRequest);
+    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -112,6 +186,7 @@ public class CheckInActivity extends AppCompatActivity implements OnMapReadyCall
                                 + location.getLongitude(), Toast.LENGTH_LONG).show();
                     }
                     else {
+                        checkInNow();
                         Toast.makeText(getBaseContext(), "Inside: "+ location.getLatitude() + ", "
                                 + location.getLongitude(), Toast.LENGTH_LONG).show();
                     }

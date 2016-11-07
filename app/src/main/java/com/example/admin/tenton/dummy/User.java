@@ -8,23 +8,31 @@ import java.io.Serializable;
  */
 
 public class User implements Serializable {
+
     public String fullName;
     public String userId;
-    public String email;
-    public String activeStatus;
-    public Integer uId_;
-    public Boolean active;
+    //public String email;
+    public Boolean status;
+    public String calculatedMins;
+    public String totalMinutes;
+
+
+    public static User currentUser = null;
 
     public static User createFromObject(JSONObject r){
         try {
             User user = new User();
             user.userId = r.getString("userId");
             user.fullName = r.getString("fullname");
-            user.email = r.getString("email");
-            user.activeStatus = r.getString("active");
+            //user.email = r.getString("email");
 
-            user.uId_ = r.getInt("userId");
-            user.active = r.getInt("active") == 1;
+            user.calculatedMins = r.getString("calculatedMinutes");
+
+            if (!r.isNull("totalMinutes")) {
+                user.totalMinutes = r.getString("totalMinutes");
+            }
+
+            user.status = r.getInt("status") == 1;
             return user;
         }
         catch (JSONException e){

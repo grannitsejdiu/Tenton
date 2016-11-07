@@ -2,7 +2,9 @@ package com.example.admin.tenton;
 
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -59,6 +61,70 @@ public class LogIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
+        SharedPreferences sharedPref = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+        final String username = sharedPref.getString("username", "");
+        final String password = sharedPref.getString("password", "");
+
+        if (username.equals("") & password.equals("")) {
+            setContentView(R.layout.activity_log_in);
+       }
+        else {
+
+            //region Else for opening PeopleListActivity and passing the User.currentUser value
+            Intent intent = new Intent(getApplicationContext(), PeopleListActivity.class);
+            startActivity(intent);
+            StringRequest jRequest = new StringRequest(Request.Method.POST, m_RequestUrl,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String res) {
+
+                            try {
+                                JSONObject r = new JSONObject(res);
+
+                                JSONArray arr = r.getJSONArray("data");
+                                if (arr.length() == 1) {
+
+                                    User u = User.createFromObject(arr.getJSONObject(0));
+
+                                    if (u != null) {
+                                        Intent intent = new Intent(getApplicationContext(), PeopleListActivity.class);
+                                        User.currentUser = u;
+                                        //Perjcellja e vleres u User tek acitiviteti tjeter
+                                        intent.putExtra("User", u);
+                                       // startActivity(intent);
+//                                            Toast.makeText(getApplicationContext(),
+//                                                    u.fullName + ", Welcome to Tenton App!", Toast.LENGTH_SHORT).show();
+
+                                    } else {
+                                        Toast.makeText(getApplicationContext(), "Cannot parse User", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+                            } catch (JSONException e) {
+                                Toast.makeText(getApplicationContext(),
+                                        e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError e) {
+                    e.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("email", username);
+                    params.put("password", password);
+                    return params;
+                }
+            };
+            RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+            mRequestQueue.add(jRequest);
+
+            //endregion
+        }
+
         mUserEmail = (EditText) findViewById(R.id.userName);
         mPassword = (EditText) findViewById(R.id.passWord);
         btnLogIn = (Button) findViewById(R.id.btnLogIn);
@@ -66,8 +132,6 @@ public class LogIn extends AppCompatActivity {
         btnLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-//                Toast.makeText(getApplicationContext(), "Logged in successfully",
-//                        Toast.LENGTH_LONG).show();
 
                 pDialog = new ProgressDialog(LogIn.this);
                 pDialog.setTitle("Tentonizers");
@@ -79,44 +143,52 @@ public class LogIn extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String res) {
-                                // get response
-                               // System.out.println(res);
 
-                                try
-                                {
+                                try {
                                     JSONObject r = new JSONObject(res);
 
                                     JSONArray arr = r.getJSONArray("data");
-                                    if ( arr.length() == 1){
+                                    if (arr.length() == 1) {
 
                                         User u = User.createFromObject(arr.getJSONObject(0));
 
                                         if (u != null) {
                                             Intent intent = new Intent(getApplicationContext(), PeopleListActivity.class);
+                                            User.currentUser = u;
+
+                                            SharedPreferences sharedPref = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+
+                                            SharedPreferences.Editor editor = sharedPref.edit();
+                                            editor.putString("username", mUserEmail.getText().toString());
+                                            editor.putString("password", mPassword.getText().toString());
+                                            editor.apply();
+
+                                            String uname = sharedPref.getString("username", "");
+                                            String pass = sharedPref.getString("password", "");
+
+                                            Toast.makeText(getApplicationContext(), "Welcome " +
+                                                    uname.toUpperCase() + "  " + pass.toUpperCase(), Toast.LENGTH_LONG).show();
 
                                             //Perjcellja e vleres u User tek acitiviteti tjeter
                                             intent.putExtra("User", u);
                                             startActivity(intent);
-                                            Toast.makeText(getApplicationContext(),
-                                                    u.fullName + ", Welcome to Tenton App!", Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(getApplicationContext(),
+//                                                    u.fullName + ", Welcome to Tenton App!", Toast.LENGTH_SHORT).show();
+
+
+                                        } else {
+                                            Toast.makeText(getApplicationContext(), "Cannot parse User", Toast.LENGTH_SHORT).show();
                                         }
-                                        else{
-                                            Toast.makeText(getApplicationContext(),"Cannot parse User", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                    else if ((mUserEmail.getText().toString().trim().length()==0)
-                                            || (mPassword.getText().toString().trim().length()==0)){
+                                    } else if ((mUserEmail.getText().toString().trim().length() == 0)
+                                            || (mPassword.getText().toString().trim().length() == 0)) {
                                         Toast.makeText(getApplicationContext(), "Please input Username and Password",
                                                 Toast.LENGTH_LONG).show();
-                                    }
-
-                                    else{
+                                    } else {
                                         Toast.makeText(getApplicationContext(),
                                                 "Invalid email or password.", Toast.LENGTH_SHORT).show();
                                     }
 
-                                }
-                                catch (JSONException e){
+                                } catch (JSONException e) {
                                     Toast.makeText(getApplicationContext(),
                                             e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -151,6 +223,7 @@ public class LogIn extends AppCompatActivity {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
+
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
