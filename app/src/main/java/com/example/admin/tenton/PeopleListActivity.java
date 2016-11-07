@@ -72,17 +72,11 @@ public class PeopleListActivity extends AppCompatActivity{
     private SwipeRefreshLayout mSwipeRefreshLayout;
     SimpleItemRecyclerViewAdapter mAdapter;
     View recyclerView;
-    //private ImageView userStatus;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_list);
-
-//        Intent intent = getIntent();
-
 
         mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipeRefresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
