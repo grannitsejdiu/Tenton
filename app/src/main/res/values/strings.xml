@@ -9,5 +9,6 @@
     <string name="btnLogIn">Log In</string>
     <string name="btnCheckIn">Check In</string>
     <string name="btnCheckOut">Check Out</string>
+    <string name="checkOutTitle">You\'re Tentonized!</string>
 
 </resources>

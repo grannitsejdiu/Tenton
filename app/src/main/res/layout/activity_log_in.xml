@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_log_in"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="105dp"
+    android:layout_height="wrap_content"
+    android:paddingTop="20dp"
     android:paddingLeft="15dp"
     android:paddingStart="15dp"
     android:paddingEnd="15dp"
@@ -12,8 +12,15 @@
     tools:context="com.example.admin.tenton.LogIn">
 
 
+    <ImageView
+        android:id="@+id/imTentonpng"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:background="@drawable/tentonizer"/>
+
     <EditText
         android:id="@+id/userName"
+        android:paddingTop="37dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxLines="1"
@@ -30,6 +37,7 @@
         android:id="@+id/btnLogIn"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
+        android:textColor="@color/colorPrimary"
         android:layout_height="40dp"
         android:text="@string/btnLogIn"
         android:background="@drawable/login_buttonshape"

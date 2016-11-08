@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -45,7 +46,6 @@ public class LogIn extends AppCompatActivity {
     private EditText mUserEmail;
     private EditText mPassword;
     private Button btnLogIn;
-
     private ProgressDialog pDialog;
     private String m_RequestUrl = "http://in.tenton.co/api/?controller=users&action=check";
     View recyclerView;
@@ -146,18 +146,14 @@ public class LogIn extends AppCompatActivity {
 
                                 try {
                                     JSONObject r = new JSONObject(res);
-
                                     JSONArray arr = r.getJSONArray("data");
                                     if (arr.length() == 1) {
-
                                         User u = User.createFromObject(arr.getJSONObject(0));
-
                                         if (u != null) {
                                             Intent intent = new Intent(getApplicationContext(), PeopleListActivity.class);
                                             User.currentUser = u;
 
                                             SharedPreferences sharedPref = getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-
                                             SharedPreferences.Editor editor = sharedPref.edit();
                                             editor.putString("username", mUserEmail.getText().toString());
                                             editor.putString("password", mPassword.getText().toString());
@@ -166,15 +162,13 @@ public class LogIn extends AppCompatActivity {
                                             String uname = sharedPref.getString("username", "");
                                             String pass = sharedPref.getString("password", "");
 
-                                            Toast.makeText(getApplicationContext(), "Welcome " +
-                                                    uname.toUpperCase() + "  " + pass.toUpperCase(), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), "Welcome to Tenton " +
+                                                    uname.substring(0,1).toUpperCase() + uname.substring(1),
+                                                    Toast.LENGTH_SHORT).show();
 
                                             //Perjcellja e vleres u User tek acitiviteti tjeter
                                             intent.putExtra("User", u);
                                             startActivity(intent);
-//                                            Toast.makeText(getApplicationContext(),
-//                                                    u.fullName + ", Welcome to Tenton App!", Toast.LENGTH_SHORT).show();
-
 
                                         } else {
                                             Toast.makeText(getApplicationContext(), "Cannot parse User", Toast.LENGTH_SHORT).show();
@@ -187,7 +181,6 @@ public class LogIn extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(),
                                                 "Invalid email or password.", Toast.LENGTH_SHORT).show();
                                     }
-
                                 } catch (JSONException e) {
                                     Toast.makeText(getApplicationContext(),
                                             e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -210,11 +203,8 @@ public class LogIn extends AppCompatActivity {
                         return params;
                     }
                 };
-
                 RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-
                 mRequestQueue.add(jRequest);
-
             }
         });
 

@@ -157,7 +157,6 @@ public class CheckOutActivity extends AppCompatActivity implements OnMapReadyCal
                     }
                     else {
 
-
                     }
                     return;
                 }
@@ -181,12 +180,12 @@ public class CheckOutActivity extends AppCompatActivity implements OnMapReadyCal
 
                     if (distance[0] > circle.getRadius()){
                         Toast.makeText(getBaseContext(), "Outside: "+ location.getLatitude() + ", "
-                                + location.getLongitude(), Toast.LENGTH_LONG).show();
+                                + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     }
                     else {
                         checkOutNow();
                         Toast.makeText(getBaseContext(), "Inside: "+ location.getLatitude() + ", "
-                                + location.getLongitude(), Toast.LENGTH_LONG).show();
+                                + location.getLongitude(), Toast.LENGTH_SHORT).show();
 
                     }
                 }

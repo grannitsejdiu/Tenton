@@ -105,7 +105,6 @@ public class CheckInActivity extends AppCompatActivity implements OnMapReadyCall
                             System.out.println(r);
                             User.currentUser.status = true;
                             finish();
-
                         }
                         catch (JSONException e){
                             Toast.makeText(getApplicationContext(),
@@ -137,8 +136,8 @@ public class CheckInActivity extends AppCompatActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
 
         mMap = googleMap;
-//        final double tentonLatitude = 42.641004;
-//        final double tentonLongitude = 21.104819;
+        //final double tentonLatitude = 42.641004;
+        //final double tentonLongitude = 21.104819;
 
         //Tenton Location
         final double tentonLatitude = 42.643840;
@@ -166,7 +165,6 @@ public class CheckInActivity extends AppCompatActivity implements OnMapReadyCall
 
                 LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 Criteria criteria = new Criteria();
-
                 Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
                 if (location!= null){
@@ -183,12 +181,12 @@ public class CheckInActivity extends AppCompatActivity implements OnMapReadyCall
 
                     if (distance[0] > circle.getRadius()){
                         Toast.makeText(getBaseContext(), "Outside: "+ location.getLatitude() + ", "
-                                + location.getLongitude(), Toast.LENGTH_LONG).show();
+                                + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     }
                     else {
                         checkInNow();
                         Toast.makeText(getBaseContext(), "Inside: "+ location.getLatitude() + ", "
-                                + location.getLongitude(), Toast.LENGTH_LONG).show();
+                                + location.getLongitude(), Toast.LENGTH_SHORT).show();
                     }
                 }
                 else {
